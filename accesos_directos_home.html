@@ -3,56 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ACCESOS DIRECTOS</title>
+  <title>ACCESOS</title>
   <style>
+    :root {
+      --size-desktop: 100px;
+      --size-tablet: 70px;
+      --size-mobile: 42px;
+    }
     body {
       font-family: Arial, Helvetica, sans-serif;
-      background: #ffffff;
       margin: 0;
-      padding: 30px 20px;
+      padding: 30px 16px;
+      background: #ffffff;
+      color: #000;
     }
     h1 {
       text-align: center;
-      margin-bottom: 40px;
-      font-size: 40px;
-      letter-spacing: 2px;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
     }
     .list {
+      max-width: 1000px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 25px;
-      max-width: 900px;
-      margin: 0 auto;
+      gap: 20px;
     }
     a {
       text-decoration: none;
-      color: #000000;
+      color: inherit;
     }
     .item {
       text-align: center;
-      font-size: 100px;
-      font-weight: bold;
+      font-weight: 800;
       text-transform: uppercase;
       border-bottom: 2px solid #000;
-      padding-bottom: 10px;
+      padding: 10px 0;
+      font-size: var(--size-desktop);
     }
-    .item:hover {
+    .item:hover { opacity: 0.7; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .item { font-size: var(--size-tablet); }
+    }
+    @media (max-width: 600px) {
+      .item { font-size: var(--size-mobile); }
+    }
+
+    /* Admin */
+    .admin {
+      max-width: 600px;
+      margin: 40px auto;
+      border-top: 3px solid #000;
+      padding-top: 30px;
+    }
+    .admin h2 { text-align: center; }
+    .admin input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .admin button {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .hint {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 20px;
       opacity: 0.7;
     }
   </style>
 </head>
 <body>
-  <h1>ACCESOS DIRECTOS</h1>
+  <h1>ACCESOS</h1>
+  <div class="list" id="list"></div>
 
-  <div class="list">
-    <a href="https://www.facebook.com" target="_blank"><div class="item">Facebook</div></a>
-    <a href="https://mail.google.com" target="_blank"><div class="item">Gmail</div></a>
-    <a href="https://www.instagram.com" target="_blank"><div class="item">Instagram</div></a>
-    <a href="https://www.youtube.com" target="_blank"><div class="item">YouTube</div></a>
-    <a href="https://music.youtube.com" target="_blank"><div class="item">YouTube Music</div></a>
-    <a href="https://chat.openai.com" target="_blank"><div class="item">ChatGPT</div></a>
-    <a href="https://www.netflix.com" target="_blank"><div class="item">Netflix</div></a>
-    <a href="https://web.whatsapp.com" target="_blank"><div class="item">WhatsApp Web</div></a>
+  <div class="admin" id="admin" style="display:none">
+    <h2>ADMIN</h2>
+    <input id="name" placeholder="Nombre (ej: Google)" />
+    <input id="url" placeholder="URL (https://...)" />
+    <button onclick="addLink()">AGREGAR LINK</button>
+    <div class="hint">Esta sección solo aparece con <b>?admin</b></div>
   </div>
+
+  <script>
+    const defaultLinks = [
+      { name: 'Facebook', url: 'https://www.facebook.com' },
+      { name: 'Gmail', url: 'https://mail.google.com' },
+      { name: 'Instagram', url: 'https://www.instagram.com' },
+      { name: 'YouTube', url: 'https://www.youtube.com' },
+      { name: 'YouTube Music', url: 'https://music.youtube.com' },
+      { name: 'ChatGPT', url: 'https://chat.openai.com' },
+      { name: 'Netflix', url: 'https://www.netflix.com' },
+      { name: 'WhatsApp Web', url: 'https://web.whatsapp.com' }
+    ];
+
+    let links = JSON.parse(localStorage.getItem('links')) || defaultLinks;
+
+    function render() {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+      links.forEach(l => {
+        const a = document.createElement('a');
+        a.href = l.url;
+        a.target = '_blank';
+        a.innerHTML = `<div class="item">${l.name}</div>`;
+        list.appendChild(a);
+      });
+      localStorage.setItem('links', JSON.stringify(links));
+    }
+
+    function addLink() {
+      const name = document.getElementById('name').value.trim();
+      const url = document.getElementById('url').value.trim();
+      if (!name || !url) return alert('Completa nombre y URL');
+      links.push({ name, url });
+      document.getElementById('name').value = '';
+      document.getElementById('url').value = '';
+      render();
+    }
+
+    if (location.search.includes('admin')) {
+      document.getElementById('admin').style.display = 'block';
+    }
+
+    render();
+  </script>
 </body>
 </html>
