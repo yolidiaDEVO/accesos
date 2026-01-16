@@ -112,11 +112,15 @@
     function render() {
       const list = document.getElementById('list');
       list.innerHTML = '';
+
+      // ordenar alfabéticamente por nombre
+      links.sort((a, b) => a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }));
+
       links.forEach(l => {
         const a = document.createElement('a');
         a.href = l.url;
         a.target = '_blank';
-        a.innerHTML = `<div class="item">${l.name}</div>`;
+        a.innerHTML = `<div class=\"item\">${l.name}</div>`;
         list.appendChild(a);
       });
       localStorage.setItem('links', JSON.stringify(links));
